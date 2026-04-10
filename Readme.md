@@ -27,6 +27,7 @@ O ambiente está dividido em três camadas principais:
 Para rodar este ambiente, você precisará ter instalados na sua máquina:
 * [Docker](https://docs.docker.com/get-docker/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
+// A versão mais recente do Docker Desktop já vem com o Docker Compose instalado, não precisa instalar por fora
 
 ---
 
@@ -54,21 +55,24 @@ Para fazer o build (se necessário) e iniciar todos os contêineres em segundo p
 
 
 ```bash
-docker-compose up -d
+docker-compose up -d  // Versão mais antiga do Docker Compose
+docker compose up -d  // Versão mais recente do Docker Compose
 ```
 
 ### Verificar o status dos serviços
 Para confirmar se todos os contêineres estão rodando corretamente:
 
 ```bash
-docker-compose ps
+docker-compose ps  // Versão mais antiga do Docker Compose
+docker compose ps  // Versão mais recente do Docker Compose
 ```
 
 ### Acompanhar os logs
 Para visualizar os logs em tempo real de todos os serviços (útil para debugar erros na inicialização ou no tráfego MQTT):
 
 ```bash
-docker-compose logs -f
+docker-compose logs -f  // Versão mais antiga do Docker Compose
+docker compose logs -f  // Versão mais recente do Docker Compose
 ```
 Para interromper essa transmissão e retornar o controle do terminal para você, basta pressionar no seu teclado:
 ```bash
@@ -80,7 +84,8 @@ Ctrl + C
 Para parar todos os contêineres e remover as redes criadas pelo docker-compose (sem deletar os volumes):
 
 ```bash
-docker-compose down
+docker-compose down  // Versão mais antiga do Docker Compose
+docker compose down  // Versão mais recente do Docker Compose
 ```
 
 ## 🌐 Portas e Pontos de Acesso
