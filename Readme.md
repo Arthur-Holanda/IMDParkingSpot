@@ -44,7 +44,7 @@ listener 9001
 protocol websockets
 
 
-Para criar, ultimize o seguinte comando no terminal:
+Para criar, ultilize o seguinte comando no terminal:
 ```bash
 echo -e "allow_anonymous true\nlistener 1883\nprotocol mqtt\nlistener 9001\nprotocol websockets" > mosquitto.conf
 ```
