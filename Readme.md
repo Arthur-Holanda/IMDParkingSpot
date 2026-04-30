@@ -111,8 +111,8 @@ Para visualizar o monitoramento das vagas, conecte o Grafana ao CrateDB e import
 Para parar todos os contêineres criadas pelo docker-compose sem remover os volumes:
 
 ```bash
-docker-compose down -v // Versão mais antiga do Docker Compose
-docker compose down -v  // Versão mais recente do Docker Compose
+docker-compose stop -v // Versão mais antiga do Docker Compose
+docker compose stop -v  // Versão mais recente do Docker Compose
 ```
 
 ### Para remover a plataforma
