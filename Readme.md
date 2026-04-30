@@ -35,20 +35,6 @@ Para rodar este ambiente, você precisará ter instalados na sua máquina:
 
 Abra o terminal no mesmo diretório onde o arquivo `docker-compose.yml` está localizado e utilize os comandos abaixo.
 
-### ⚠️ Configurações Adicionais
-Arquivo de Configuração MQTT: Certifique-se de que o arquivo ./mosquitto.conf referenciado no docker-compose exista no mesmo diretório antes de subir o ambiente. Caso contrário, o serviço mosquitto apresentará erro ao montar o volume. Exemplo básico de mosquitto.conf para testes locais:
-Snippet de código
-allow_anonymous true
-listener 1883
-protocol mqtt
-listener 9001
-protocol websockets
-
-
-Para criar, ultilize o seguinte comando no terminal:
-```bash
-echo -e "allow_anonymous true\nlistener 1883\nprotocol mqtt\nlistener 9001\nprotocol websockets" > mosquitto.conf
-```
 
 ### Iniciar a plataforma
 Para fazer o build (se necessário) e iniciar todos os contêineres em segundo plano (modo detached), execute:
@@ -74,18 +60,67 @@ Para visualizar os logs em tempo real de todos os serviços (útil para debugar 
 docker-compose logs -f  // Versão mais antiga do Docker Compose
 docker compose logs -f  // Versão mais recente do Docker Compose
 ```
-Para interromper essa transmissão e retornar o controle do terminal para você, basta pressionar no seu teclado:
+Para interromper essa transmissão e retornar o controle do terminal para você, basta pressionar no seu teclado: `Ctrl + C`
+
+### 🔌 Provisionamento de Dispositivos e Subscrições
+
+Após iniciar os contêineres e garantir que o status está OK, é necessário configurar o IoT Agent (Service Group e Devices) e criar a subscrição do Orion para que o QuantumLeap comece a gravar o histórico.
+
+Para isso, execute o script de setup **uma única vez**:
 ```bash
-Ctrl + C
+bash scripts/setup_fiware.sh
 ```
+(⚠️ Nota: Rodar este comando múltiplas vezes criará subscrições duplicadas. Caso isso ocorra, derrube a infraestrutura apagando os volumes com `docker compose down -v` e inicie o processo novamente).
+
+### 🚗 Iniciando o Simulador IoT (MQTT)
+
+Com a infraestrutura em pé e o provisionamento realizado, você precisa gerar o tráfego de dados para o sistema. O projeto conta com um script em Python que simula sensores de vagas enviando dados (status da vaga, alarmes e placas) via protocolo MQTT.
+
+Abra um novo terminal na raiz do projeto e execute:
+```bash
+python3 src/simulador.py
+```
+(Deixe este script rodando no terminal para que os dados continuem chegando em tempo real no banco de dados e no dashboard). Para interromper esse script e retornar o controle do terminal para você, basta pressionar no seu teclado: `Ctrl + C`
+
+
+### 📊 Configurando e Importando o Dashboard no Grafana
+
+Para visualizar o monitoramento das vagas, conecte o Grafana ao CrateDB e importe o painel do projeto:
+
+**Passo 1: Criar a Conexão (Data Source)**
+1. Acesse o Grafana em `http://localhost:3000` (Usuário e Senha iniciais: `admin`).
+2. No menu lateral, acesse **Connections** > **Data Sources** > **Add data source**.
+3. Selecione o banco **PostgreSQL** (protocolo compatível com o CrateDB).
+4. Preencha as configurações exatas abaixo:
+   * **Host**: `db-crate:5432`
+   * **User**: `crate`
+   * **Password**: *(deixe em branco)*
+   * **TLS Mode**: `disable`
+5. Clique em **Save** 
+
+**Passo 2: Importar a Interface**
+1. No menu lateral, vá em **Dashboards** > **New** > **Import**.
+2. Faça o upload do arquivo localizado em `dashboards/Dashbord1.json`.
+3. No campo inferior, vincule ao Data Source PostgreSQL que você acabou de criar.
+4. Clique em **Import**.
+5. **Ajuste possivelmente necessario:** Assim que o painel abrir, pode ser necessario editar o Data Sorce de cada uma das visualizações para o banco `grafana-PostgreSQL-datasource`.
+
 
 (Dica: Para ver os logs de um serviço específico, adicione o nome dele ao final, ex: docker-compose logs -f orion)
-### Parar e remover a plataforma
-Para parar todos os contêineres e remover as redes criadas pelo docker-compose (sem deletar os volumes):
+### Para parar a plataforma
+Para parar todos os contêineres criadas pelo docker-compose sem remover os volumes:
 
 ```bash
-docker-compose down  // Versão mais antiga do Docker Compose
-docker compose down  // Versão mais recente do Docker Compose
+docker-compose down -v // Versão mais antiga do Docker Compose
+docker compose down -v  // Versão mais recente do Docker Compose
+```
+
+### Para remover a plataforma
+Para parar todos os contêineres e remover as redes criadas pelo docker-compose removendo os volumes:
+
+```bash
+docker-compose down -v // Versão mais antiga do Docker Compose
+docker compose down -v  // Versão mais recente do Docker Compose
 ```
 
 ## 🌐 Portas e Pontos de Acesso

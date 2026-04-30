@@ -43,7 +43,7 @@ services:
       - "1883:1883" # Porta padrão MQTT para os sensores
       - "9001:9001"
     volumes:
-      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./docker/mosquitto.conf:/mosquitto/config/mosquitto.conf
     networks:
       - fiware_network
 
@@ -80,7 +80,7 @@ services:
       - fiware_network
 
   iot-agent-mqtt:
-    image: fiware/iotagent-ul:latest # Pode usar iotagent-json também dependendo do payload
+    image: fiware/iotagent-ul:latest
     hostname: iot-agent
     container_name: fiware-iot-agent
     depends_on:
@@ -107,7 +107,7 @@ services:
   # Visualização
   # ========================================
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.4.0
     hostname: grafana
     container_name: dashboard-grafana
     depends_on:
